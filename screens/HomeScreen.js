@@ -1,4 +1,3 @@
-// HomeScreen.js
 import React from 'react';
 import { ImageBackground, StyleSheet, TouchableOpacity, Text } from 'react-native';
 

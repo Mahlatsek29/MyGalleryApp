@@ -1,4 +1,3 @@
-// CameraScreen.js
 import React, { useState, useEffect, useRef } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import Constants from 'expo-constants';
@@ -8,6 +7,7 @@ import * as Location from 'expo-location';
 import * as LocationGeocoding from 'expo-location';
 import { MaterialIcons } from '@expo/vector-icons';
 import Button from '../src/components/Button';
+import * as FileSystem from 'expo-file-system'; // Import FileSystem
 
 export default function CameraScreen({ navigation }) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
@@ -72,9 +72,21 @@ export default function CameraScreen({ navigation }) {
   const savePicture = async () => {
     if (image) {
       try {
-        // You can save the image to your server or cloud storage here
-        // Example: saveImageToServer(image, location.coords, address);
-        // For the sake of simplicity, I'll just log the data here.
+        const galleryFolderName = 'GalleryApp';
+        const directory = `${FileSystem.documentDirectory}${galleryFolderName}/`;
+
+        // Ensure the gallery directory exists
+        await FileSystem.makeDirectoryAsync(directory, { intermediates: true });
+
+        const fileName = `image_${Date.now()}.jpg`; // Unique filename
+        const imagePath = `${directory}${fileName}`;
+
+        // Move the image to the gallery directory
+        await FileSystem.moveAsync({
+          from: image,
+          to: imagePath,
+        });
+
         console.log('Image saved successfully');
       } catch (error) {
         console.log('Error saving image:', error);

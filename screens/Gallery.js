@@ -1,9 +1,9 @@
-
 import React, { useEffect, useState } from 'react';
 import { View, FlatList, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import * as FileSystem from 'expo-file-system';
+import { MaterialIcons } from '@expo/vector-icons'; // Import MaterialIcons
 
-const Gallery = () => {
+const Gallery = ({ navigation }) => {
   const [galleryImages, setGalleryImages] = useState([]);
 
   useEffect(() => {
@@ -40,6 +40,14 @@ const Gallery = () => {
         keyExtractor={(item, index) => index.toString()}
         numColumns={3}
       />
+
+      {/* Back button at the bottom */}
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}
+      >
+        <MaterialIcons name="arrow-back" size={28} color="#fff" />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -57,6 +65,14 @@ const styles = StyleSheet.create({
   image: {
     flex: 1,
     aspectRatio: 1,
+  },
+  backButton: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    padding: 10,
+    borderRadius: 50,
   },
 });
 
