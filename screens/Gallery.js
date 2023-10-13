@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, FlatList, Image, TouchableOpacity, StyleSheet, Text } from 'react-native';
 import * as FileSystem from 'expo-file-system';
-import { MaterialIcons } from '@expo/vector-icons'; // Import MaterialIcons
+import { MaterialIcons } from '@expo/vector-icons';
 
 const Gallery = ({ navigation }) => {
   const [galleryImages, setGalleryImages] = useState([]);
@@ -24,7 +24,9 @@ const Gallery = ({ navigation }) => {
 
   const renderGalleryItem = ({ item }) => (
     <TouchableOpacity style={styles.imageContainer} onPress={() => openImage(item)}>
-      <Image source={{ uri: item }} style={styles.image} />
+      <View style={styles.imageCard}>
+        <Image source={{ uri: item }} style={styles.image} />
+      </View>
     </TouchableOpacity>
   );
 
@@ -42,10 +44,7 @@ const Gallery = ({ navigation }) => {
       />
 
       {/* Back button at the bottom */}
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => navigation.goBack()}
-      >
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <MaterialIcons name="arrow-back" size={28} color="#fff" />
       </TouchableOpacity>
     </View>
@@ -61,6 +60,11 @@ const styles = StyleSheet.create({
   imageContainer: {
     flex: 1,
     margin: 2,
+  },
+  imageCard: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    overflow: 'hidden',
   },
   image: {
     flex: 1,

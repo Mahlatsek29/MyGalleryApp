@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import Constants from 'expo-constants';
-import { Camera, CameraType } from 'expo-camera';
+import { Camera } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
 import * as Location from 'expo-location';
 import * as LocationGeocoding from 'expo-location';
 import { MaterialIcons } from '@expo/vector-icons';
-import Button from '../src/components/Button';
-import * as FileSystem from 'expo-file-system'; // Import FileSystem
+import * as FileSystem from 'expo-file-system';
 
 export default function CameraScreen({ navigation }) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
@@ -20,25 +19,32 @@ export default function CameraScreen({ navigation }) {
 
   useEffect(() => {
     (async () => {
-      MediaLibrary.requestPermissionsAsync();
-      const cameraStatus = await Camera.requestCameraPermissionsAsync();
-      setHasCameraPermission(cameraStatus.status === 'granted');
+      // Request media library permissions
+      await MediaLibrary.requestPermissionsAsync();
 
+      // Request camera permissions
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      setHasCameraPermission(status === 'granted');
+
+      // Fetch location and address
       fetchLocationAndAddress();
     })();
   }, []);
 
   const fetchLocationAndAddress = async () => {
     try {
+      // Request location permissions
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         console.log('Location permission not granted');
         return;
       }
 
+      // Get current location
       const location = await Location.getCurrentPositionAsync({});
       setLocation(location);
 
+      // Reverse geocode to get address
       const addressData = await LocationGeocoding.reverseGeocodeAsync({
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
@@ -59,6 +65,7 @@ export default function CameraScreen({ navigation }) {
   const takePicture = async () => {
     if (cameraRef) {
       try {
+        // Take a picture with the camera
         const data = await cameraRef.current.takePictureAsync();
         console.log(data);
         setImage(data.uri);
@@ -72,22 +79,27 @@ export default function CameraScreen({ navigation }) {
   const savePicture = async () => {
     if (image) {
       try {
+        // Define gallery folder name and directory
         const galleryFolderName = 'GalleryApp';
         const directory = `${FileSystem.documentDirectory}${galleryFolderName}/`;
 
         // Ensure the gallery directory exists
         await FileSystem.makeDirectoryAsync(directory, { intermediates: true });
 
-        const fileName = `image_${Date.now()}.jpg`; // Unique filename
-        const imagePath = `${directory}${fileName}`;
+        // Generate a unique filename
+        const fileName = `image_${Date.now()}.jpg`;
+
+        // Specify the source and destination paths
+        const sourcePath = image;
+        const destinationPath = `${directory}${fileName}`;
 
         // Move the image to the gallery directory
         await FileSystem.moveAsync({
-          from: image,
-          to: imagePath,
+          from: sourcePath,
+          to: destinationPath,
         });
 
-        console.log('Image saved successfully');
+        console.log('Image saved successfully at:', destinationPath);
       } catch (error) {
         console.log('Error saving image:', error);
       }
@@ -132,7 +144,9 @@ export default function CameraScreen({ navigation }) {
               icon="retweet"
               onPress={() => {
                 setType(
-                  type === CameraType.back ? CameraType.front : CameraType.back
+                  type === Camera.Constants.Type.back
+                    ? Camera.Constants.Type.front
+                    : Camera.Constants.Type.back
                 );
               }}
             />
@@ -208,16 +222,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 16, // Increased header height
-    backgroundColor: '#333', // Added background color for better visibility
+    paddingVertical: 16, 
+    backgroundColor: '#333', 
   },
   headerText: {
     color: '#fff',
-    fontSize: 24, // Increased font size
+    fontSize: 24,
     fontWeight: 'bold',
   },
   backButton: {
-    padding: 8, // Increased padding around the back button
+    padding: 8, 
   },
   camera: {
     flex: 5,

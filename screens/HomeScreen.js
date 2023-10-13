@@ -12,7 +12,7 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <ImageBackground
-      source={require('../assets/wall.jpg')} // Replace 'background.jpg' with your background image file
+      source={require('../assets/image.jpg')} 
       style={styles.container}
     >
       <TouchableOpacity style={styles.button} onPress={navigateToCamera}>
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   button: {
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    backgroundColor: 'black',
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 8,
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#000',
+    color: 'white',
   },
 });
 
